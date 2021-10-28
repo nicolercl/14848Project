@@ -1,0 +1,24 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+ name: bdp-app
+spec:
+ strategy:
+   rollingUpdate:
+     maxSurge: 1
+     maxUnavailable: 1
+   type: RollingUpdate
+ replicas: 1
+ selector:
+   matchLabels:
+     app: bdp-app
+ template:
+   metadata:
+     labels:
+       app: bdp-app
+   spec:
+     containers:
+       - name: bdp-app
+         image: wwweiweiii/app
+         ports:
+           - containerPort: 80

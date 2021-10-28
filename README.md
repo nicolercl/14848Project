@@ -72,7 +72,7 @@ wwweiweiii/hadoop-datanode
 wwweiweiii/jupyter-notebook
 bitnami/spark
 wwweiweiii/sonarqubescanner
-postgresql:10
+postgres:10
 wwweiweiii/app
 ```
 Note that we need to deploy and expose the 4 big data processing services first, get their IPs and update the entry app links before deploying the entry app.
@@ -222,3 +222,14 @@ Steps to deploy on GKE:
 ![](https://i.imgur.com/zVep4Qc.png)
 ![](https://i.imgur.com/Ut2eSji.png)
 ![](https://i.imgur.com/glHI867.png)
+
+### URLs to images used
+```
+https://hub.docker.com/r/wwweiweiii/app
+https://hub.docker.com/r/wwweiweiii/hadoop-datanode
+https://hub.docker.com/r/wwweiweiii/hadoop-namenode
+https://hub.docker.com/r/wwweiweiii/sonarqubescanner
+https://hub.docker.com/r/wwweiweiii/jupyter-notebook
+https://hub.docker.com/r/bitnami/spark
+https://hub.docker.com/_/postgres
+```

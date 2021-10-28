@@ -18,7 +18,7 @@ spec:
        app: datanode2
    spec:
      containers:
-       - name: spark
+       - name: datanode2
          image: wwweiweiii/hadoop-datanode
          ports:
            - containerPort: 9864

@@ -40,13 +40,13 @@ kubectl apply -f spark/spark-service.yaml
 ### Apache Hadoop ###
 
 # Set up hadoop namenode & datanodes deployment
-kubectl apply -f hadoop/namenode-deployment.yaml
-kubectl apply -f hadoop/datanode1-deployment.yaml
-kubectl apply -f hadoop/datanode2-deployment.yaml
+kubectl apply -f hadoop/namenode/namenode-deployment.yaml
+kubectl apply -f hadoop/datanode/datanode1-deployment.yaml
+kubectl apply -f hadoop/datanode/datanode2-deployment.yaml
 # Set up hadoop namenode & datanodes service
-kubectl apply -f hadoop/namenode-service.yaml
-kubectl apply -f hadoop/datanode1-service.yaml
-kubectl apply -f hadoop/datanode2-service.yaml
+kubectl apply -f hadoop/namenode/namenode-service.yaml
+kubectl apply -f hadoop/datanode/datanode1-service.yaml
+kubectl apply -f hadoop/datanode/datanode2-service.yaml
 
 ### Sonarqube + scanner and postgres ###
 

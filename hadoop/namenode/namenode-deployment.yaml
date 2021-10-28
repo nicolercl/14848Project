@@ -18,7 +18,8 @@ spec:
        app: namenode
    spec:
      containers:
-       - name: spark
+       - name: namenode
          image: wwweiweiii/hadoop-namenode
+         ports:
            - containerPort: 9870
            - containerPort: 9000

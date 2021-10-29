@@ -2,7 +2,7 @@
 
 ## Docker Images & steps to run them on local machine
 
-This section documents how I customized and ran the docker images in docker on the local machine before deploying to kubernetes. Skip this and go to the `Configuring images for Google Kubernetes Engine` section for steps to deploy on GKE.
+This section documents how I customized and ran the docker images in docker on the local machine before deploying to kubernetes. Skip this and go to the `Configuring images for Google Kubernetes Engine` section for steps to deploy on GKE manually via GUI. Alternatively, go to the `Configuring images for Google Kubernetes Engine with scripts` section for steps to deploy on GKE with kubectl scripts in the cloud shell.
 
 ### Apache Spark
 - Base image: `bitnami/spark`.
@@ -222,6 +222,21 @@ Steps to deploy on GKE:
 ![](https://i.imgur.com/zVep4Qc.png)
 ![](https://i.imgur.com/Ut2eSji.png)
 ![](https://i.imgur.com/glHI867.png)
+
+## Configuring images for Google Kubernetes Engine with scripts
+
+To speed up the deployment process, I used yaml scripts for all microservices. Below are the steps to build run the application:
+
+1. Clone this repo to cloud shell: `git clone https://github.com/nicolercl/14848Project.git` and go to the `14848Project/` directory.
+2. Create cluster and get the node IPs: `sh create_cluster.sh`.
+3. Create all 4 microservice deployments and services: `sh install_msvc.sh`.
+4. Set firewall rules for the 4 services: `sh firewall.sh`.
+5. Update `entry/index.html` urls for all 4 services with an external node IP. The nodePorts are fixed, so we don't need to change that.
+6. Build image with `docker build -t [New Image] /entry`, and push to Docker Hub with `docker push [New Image]`.
+7. In `entry/bdp-app-deployment.yaml`, update `image: wwweiweiii/app` to `image: [New Image]`.
+8. Create the entry app deployment and service as load balancer: `sh entry.sh`.
+9. Get the external IP of the entry app, `bdp-app`, through `kubectl get svc` or the GKE GUI interface.
+10. Navigate to the external IP to access the app.
 
 ### URLs to images used
 ```

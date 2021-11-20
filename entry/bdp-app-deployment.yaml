@@ -19,6 +19,17 @@ spec:
    spec:
      containers:
        - name: bdp-app
-         image: wwweiweiii/app
+         image: wwweiweiii/entry_nginx
          ports:
            - containerPort: 80
+         env:
+          - name: MY_POD_NAME
+            valueFrom:
+              fieldRef:
+                fieldPath: metadata.name
+          - name: MY_POD_NAMESPACE
+            valueFrom:
+              fieldRef:
+                fieldPath: metadata.namespace
+          - name: MY_POD_IP
+            value: MY_NODE_IP

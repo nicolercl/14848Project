@@ -73,9 +73,9 @@ wwweiweiii/jupyter-notebook
 bitnami/spark
 wwweiweiii/sonarqubescanner
 postgres:10
-wwweiweiii/app
+wwweiweiii/entry_nginx
 ```
-Note that we need to deploy and expose the 4 big data processing services first, get their IPs and update the entry app links before deploying the entry app.
+Note that we need to deploy and expose the 4 big data processing services first, before deploying the entry app.
 
 The first step is to create a GKE cluster. 
 1. Go to Kubernetes Engine -> Clusters -> Create.
@@ -198,22 +198,17 @@ Steps to deploy to GKE:
 
 #### Entry point app
 
-For the entry point app, I used an HTML file hosted on an NGINX server. It contains the welcoming message and links to the four microservices in the browser, repectively.
+For the entry point app, I used an HTML file hosted on an NGINX server. It contains the welcoming message and links to the four microservices in the browser, repectively. Note that the IPs of the nodes can only be acquired when we deploy to GKE, so we can't know the IPs when we are first constructing the image. Therefore, we must use data injection when the entry app container starts up to replace the links with the correct Node IPs. (The nodePorts are fixed, so we don't need to change that.)
 
-Steps to build app image:
-1. After configuring and deploying all 4 microservices onto GKE, we can get the links to all the services and update the links in the entry point HTML: `entry/index.html`.
-![](https://i.imgur.com/JCdQcSC.png)
+To do this, the initial docker image html file contains a dummy string, `POD_IP` in place of the actual IP. A script, `nodeip.sh`, is copied into the docker image which will replace `POD_IP` when we get the correct IPs by data injection. The command to run `nodeip.sh` is inserted into `docker-entrypoint.sh`, which is the original entrypoint script in the official Nginx image. 
 
-2. Rebuild image with `docker build -t [New Image] /entry`, and push to Docker Hub with `docker push [New Image]`.
+We inject the correct IP into the container by environment variable `MY_POD_IP` with value `MY_NODE_IP` in the deployment yaml file. Note that since yaml files cannot resolve environment variables in the host machine, I included a script in `install_entry.sh` to get the correct IP via kubectl, then use the sed -i command to replace `MY_NODE_IP` in the yaml file with the correct IP. (Note that since replace is used, we must revert the value of `MY_POD_IP` in the yaml back to the dummy string `MY_NODE_IP` if we want to deploy a second time.)
 
 Steps to deploy on GKE:
-1. Upload image to Container Registry (same commands as Single Container microservices section), but use the `[New Image]` name. 
-2. Deploy container with name `bdp-app`
+1. Upload image `wwweiweiii/entry-nginx` to Container Registry (same commands as Single Container microservices section). 
+2. Run script `install_entry.sh`, which gets the Node IPs, puts it into the deployment yaml file, and creates the entry app deployment and exposes the service as a load-balancer. Different from the other microservices, the entry of the app is deployed as a `load-balancer` type so that there is a static external IP to access the app.
 ![](https://i.imgur.com/GTq5e2t.png)
 
-4. Expose service as load-balancer
-    Different from the other microservices, the entry of the app is deployed as a `load-balancer` type so that there is a static external IP to access the app.
-![](https://i.imgur.com/fsLnfWN.png)
 
 4. Navigating to the external IP, we can access the entry-point page.
 ![](https://i.imgur.com/zUGkwyp.png)
@@ -231,16 +226,13 @@ To speed up the deployment process, I used yaml scripts for all microservices. B
 2. Create cluster and get the node IPs: `sh create_cluster.sh`.
 3. Create all 4 microservice deployments and services: `sh install_msvc.sh`.
 4. Set firewall rules for the 4 services: `sh firewall.sh`.
-5. Update `entry/index.html` urls for all 4 services with an external node IP. The nodePorts are fixed, so we don't need to change that.
-6. Build image with `docker build -t [New Image] /entry`, and push to Docker Hub with `docker push [New Image]`.
-7. In `entry/bdp-app-deployment.yaml`, update `image: wwweiweiii/app` to `image: [New Image]`.
-8. Create the entry app deployment and service as load balancer: `sh entry.sh`.
+8. Get and replace NodeIPs, create the entry app deployment and service as load balancer: `sh install_entry.sh`.
 9. Get the external IP of the entry app, `bdp-app`, through `kubectl get svc` or the GKE GUI interface.
 10. Navigate to the external IP to access the app.
 
 ### URLs to images used
 ```
-https://hub.docker.com/r/wwweiweiii/app
+https://hub.docker.com/r/wwweiweiii/entry-nginx
 https://hub.docker.com/r/wwweiweiii/hadoop-datanode
 https://hub.docker.com/r/wwweiweiii/hadoop-namenode
 https://hub.docker.com/r/wwweiweiii/sonarqubescanner

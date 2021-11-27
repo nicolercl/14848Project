@@ -7,7 +7,7 @@ search="MY_NODE_IP"
 filename="entry/bdp-app-deployment.yaml"
 sed -i "s/$search/$NODE_IP/" $filename
 
-# Set up jupyter notebook deployment
+# Set up driver app deployment
 kubectl apply -f entry/bdp-app-deployment.yaml
-# Set up jupyter notebook service
+# Set up driver app service
 kubectl apply -f entry/bdp-app-service.yaml

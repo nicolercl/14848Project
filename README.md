@@ -1,5 +1,7 @@
 # 14848 Final Project Option 1: Big Data Processing Toolbox - Checkpoint 1
 
+## Link to video demo and code walkthrough: https://cmu.box.com/s/ntv85zdq824b81sqkv66u5fji9gvym2e
+
 ## Docker Images & steps to run them on local machine
 
 This section documents how I customized and ran the docker images in docker on the local machine before deploying to kubernetes. Skip this and go to the `Configuring images for Google Kubernetes Engine` section for steps to deploy on GKE manually via GUI. Alternatively, go to the `Configuring images for Google Kubernetes Engine with scripts` section for steps to deploy on GKE with kubectl scripts in the cloud shell.
